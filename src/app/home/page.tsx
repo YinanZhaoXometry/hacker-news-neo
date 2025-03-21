@@ -15,13 +15,12 @@ export default async function HomePage() {
               <Newspaper className="w-16 h-16 text-blue-600/80" />
             </div>
             <h1 className="text-4xl font-bold mb-6 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              HackerNews
+              Neo HackerNews
             </h1>
             <p className="text-lg text-gray-600 mb-8 leading-relaxed">
               HackerNews Popular content, allowing you to easily stay updated
               with the latest trends in the tech world. Includes popular
-              articles, the latest news, Q&A discussions, project showcases, and
-              more.
+              articles, the latest news and more.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <div className="inline-flex items-center gap-2 text-sm text-gray-500 bg-white/50 px-4 py-2 rounded-full backdrop-blur-sm">
