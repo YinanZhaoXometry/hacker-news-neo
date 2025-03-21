@@ -1,20 +1,8 @@
 import Link from 'next/link';
-import { formatDistanceToNow } from 'date-fns';
+import { formatDistanceToNowStrict } from 'date-fns';
 import { enUS } from 'date-fns/locale';
 import { ArrowUpRight } from 'lucide-react';
 import pluralize from 'pluralize';
-
-interface Story {
-  id: number;
-  title: string;
-  titleZh: string | null;
-  url: string | null;
-  text: string | null;
-  textZh: string | null;
-  by: string;
-  score: number;
-  time: Date;
-}
 
 interface StoryListProps {
   stories: Story[];
@@ -41,7 +29,7 @@ export default function StoryList({
                     rel="noopener noreferrer"
                     className="text-lg font-medium hover:underline flex items-center gap-1"
                   >
-                    {story.titleZh || story.title}
+                    {story.title}
                     <ArrowUpRight className="w-4 h-4" />
                   </a>
                 ) : (
@@ -49,7 +37,7 @@ export default function StoryList({
                     href={`/item/${story.id}`}
                     className="text-lg font-medium hover:underline"
                   >
-                    {story.titleZh || story.title}
+                    {story.title}
                   </Link>
                 )}
               </div>
@@ -58,10 +46,10 @@ export default function StoryList({
                   {story.score} {pluralize('point', story.score)}
                 </span>
                 <span className="mx-2">•</span>
-                <span>Author: {story.by}</span>
+                <span>by {story.by}</span>
                 <span className="mx-2">•</span>
                 <span>
-                  {formatDistanceToNow(story.time, {
+                  {formatDistanceToNowStrict(story.time, {
                     addSuffix: true,
                     locale: enUS,
                   })}
@@ -69,8 +57,8 @@ export default function StoryList({
               </div>
             </div>
           </div>
-          {story.text && story.textZh && (
-            <div className="mt-2 text-sm text-gray-700">{story.textZh}</div>
+          {story.text && (
+            <div className="mt-2 text-sm text-gray-700">{story.text}</div>
           )}
         </article>
       ))}

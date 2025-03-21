@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { formatDistanceToNow } from 'date-fns';
+import { formatDistanceToNowStrict } from 'date-fns';
 import { enUS } from 'date-fns/locale';
 import { ArrowUpRight } from 'lucide-react';
 import { StoryCardProps } from './StoryCard.types';
@@ -36,7 +36,7 @@ export function StoryCard({ title, type, stories, icon }: StoryCardProps) {
                   rel="noopener noreferrer"
                   className="text-sm font-medium text-gray-800 hover:text-blue-600 transition-colors duration-200 flex items-center gap-1 flex-1"
                 >
-                  {story.titleZh || story.title}
+                  {story.title}
                   <ArrowUpRight className="w-3 h-3 flex-shrink-0" />
                 </a>
               ) : (
@@ -44,7 +44,7 @@ export function StoryCard({ title, type, stories, icon }: StoryCardProps) {
                   href={`/item/${story.id}`}
                   className="text-sm font-medium text-gray-800 hover:text-blue-600 transition-colors duration-200 flex-1"
                 >
-                  {story.titleZh || story.title}
+                  {story.title}
                 </Link>
               )}
             </div>
@@ -59,7 +59,7 @@ export function StoryCard({ title, type, stories, icon }: StoryCardProps) {
               </span>
               <span className="flex items-center gap-1">
                 <span className="inline-block w-1 h-1 rounded-full bg-purple-500"></span>
-                {formatDistanceToNow(story.time, {
+                {formatDistanceToNowStrict(story.time, {
                   addSuffix: true,
                   locale: enUS,
                 })}

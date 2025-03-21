@@ -1,34 +1,14 @@
-import { getStories, type StoryType } from '@/lib/db';
+import { getStories } from '@/lib/db';
 import Link from 'next/link';
-import { formatDistanceToNow } from 'date-fns';
+import { formatDistanceToNowStrict } from 'date-fns';
 import { enUS } from 'date-fns/locale';
 import { ArrowUpRight, ArrowLeft } from 'lucide-react';
 import pluralize from 'pluralize';
+import { isValidStoryType } from './CategoryPage.helpers';
+import { TYPE_MAP } from './CategoryPage.constants';
+import styles from './CategoryPage.module.css';
 
 export const dynamic = 'force-dynamic';
-
-interface Story {
-  id: number;
-  title: string;
-  url: string | null;
-  text: string | null;
-  by: string;
-  score: number;
-  time: Date;
-}
-
-const typeMap: Record<StoryType, string> = {
-  top: 'Top 24 hours',
-  new: 'Latest',
-  best: 'Best',
-  ask: 'Ask',
-  show: 'Show',
-  job: 'Jobs',
-};
-
-function isValidStoryType(type: string): type is StoryType {
-  return type in typeMap;
-}
 
 export default async function CategoryPage({
   params,
@@ -44,7 +24,7 @@ export default async function CategoryPage({
   try {
     const { stories, totalPages } = await getStories(type, page, pageSize);
 
-    // 如果请求的页码超出范围，重定向到第一页
+    // If the requested page number exceeds the range, redirect to the first page
     if (page > totalPages && totalPages > 0) {
       return {
         redirect: {
@@ -76,13 +56,13 @@ export default async function CategoryPage({
       );
     }
 
-    // 计算分页范围
+    // Calculate pagination range
     const maxDisplayPages = 5;
     const startPage = Math.max(1, page - Math.floor(maxDisplayPages / 2));
     const endPage = Math.min(totalPages, startPage + maxDisplayPages - 1);
 
     return (
-      <main className="container mx-auto max-w-7xl px-4 pt-24 pb-8">
+      <main className="container mx-auto max-w-4xl px-4 pt-24 pb-8">
         <div className="flex items-center gap-4 mb-8">
           <Link
             href="/"
@@ -91,14 +71,14 @@ export default async function CategoryPage({
             <ArrowLeft className="w-4 h-4" />
             Home
           </Link>
-          <h1 className="text-3xl font-bold">{typeMap[type]}</h1>
+          <h1 className="text-3xl font-bold">{TYPE_MAP[type]}</h1>
         </div>
 
         <div className="space-y-6">
           {stories.map((story: Story) => (
             <article
               key={story.id}
-              className="bg-white/50 rounded-2xl border border-gray-100 p-4"
+              className="bg-white/50 rounded-2xl border p-6 shadow-sm"
             >
               <div className="flex items-start gap-2">
                 {story.url ? (
@@ -106,7 +86,7 @@ export default async function CategoryPage({
                     href={story.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-md font-medium hover:text-blue-600 flex items-center gap-1 flex-1"
+                    className="text-lg font-medium hover:text-blue-600 flex items-center gap-1 flex-1"
                   >
                     {story.title}
                     <ArrowUpRight className="w-4 h-4 flex-shrink-0" />
@@ -120,22 +100,34 @@ export default async function CategoryPage({
                   </Link>
                 )}
               </div>
-              <div className="mt-2 text-sm text-gray-500">
-                <span>
-                  {story.score} {pluralize('point', story.score)}
+              <div className="mt-2 text-sm text-gray-500 flex items-center gap-3">
+                <span className="flex items-center gap-2">
+                  <span className="inline-block w-1 h-1 rounded-full bg-blue-500"></span>
+                  <span>
+                    {story.score} {pluralize('point', story.score)}
+                  </span>
                 </span>
-                <span className="mx-2">•</span>
-                <span>Author: {story.by}</span>
-                <span className="mx-2">•</span>
-                <span>
-                  {formatDistanceToNow(story.time, {
-                    addSuffix: true,
-                    locale: enUS,
-                  })}
+                <span className="flex items-center gap-2">
+                  <span className="inline-block w-1 h-1 rounded-full bg-green-500"></span>
+                  <span>
+                    by <span className="font-medium">{story.by}</span>
+                  </span>
+                </span>
+                <span className="flex items-center gap-2">
+                  <span className="inline-block w-1 h-1 rounded-full bg-purple-500"></span>
+                  <span>
+                    {formatDistanceToNowStrict(story.time, {
+                      addSuffix: true,
+                      locale: enUS,
+                    })}
+                  </span>
                 </span>
               </div>
               {story.text && (
-                <div className="mt-3 text-sm text-gray-700">{story.text}</div>
+                <div
+                  className={`mt-3 text-sm text-gray-700 ${styles.categoryPageHtmlRenderer}`}
+                  dangerouslySetInnerHTML={{ __html: story.text }}
+                ></div>
               )}
             </article>
           ))}

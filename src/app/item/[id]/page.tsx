@@ -1,21 +1,9 @@
 import { notFound } from 'next/navigation';
 import { getStory } from '@/lib/db';
-import { formatDistanceToNow } from 'date-fns';
+import { formatDistanceToNowStrict } from 'date-fns';
 import { enUS } from 'date-fns/locale';
 import { ArrowUpRight } from 'lucide-react';
 import pluralize from 'pluralize';
-
-interface Story {
-  id: number;
-  title: string;
-  titleZh: string | null;
-  url: string | null;
-  text: string | null;
-  textZh: string | null;
-  by: string;
-  score: number;
-  time: Date;
-}
 
 interface PageProps {
   params: {
@@ -46,27 +34,32 @@ export default async function StoryPage({ params }: PageProps) {
                   rel="noopener noreferrer"
                   className="text-2xl font-bold hover:underline flex items-center gap-1"
                 >
-                  {story.titleZh || story.title}
+                  {story.title}
                   <ArrowUpRight className="w-6 h-6" />
                 </a>
               ) : (
-                <h1 className="text-2xl font-bold">
-                  {story.titleZh || story.title}
-                </h1>
+                <h1 className="text-2xl font-bold">{story.title}</h1>
               )}
             </div>
-            <div className="mt-2 text-sm text-gray-500">
-              <span>
-                {story.score} {pluralize('point', story.score)}
+            <div className="mt-2 text-sm text-gray-500 flex items-center gap-2">
+              <span className="flex items-center gap-1">
+                <span className="mx-2 inline-block w-1 h-1 rounded-full bg-blue-500"></span>
+                <span>
+                  {story.score} {pluralize('point', story.score)}
+                </span>
               </span>
-              <span className="mx-2">•</span>
-              <span>Author: {story.by}</span>
-              <span className="mx-2">•</span>
-              <span>
-                {formatDistanceToNow(story.time, {
-                  addSuffix: true,
-                  locale: enUS,
-                })}
+              <span className="flex items-center gap-1">
+                <span className="mx-2 inline-block w-1 h-1 rounded-full bg-green-500"></span>
+                <span>by {story.by}</span>
+              </span>
+              <span className="flex items-center gap-1">
+                <span className="mx-2 inline-block w-1 h-1 rounded-full bg-purple-500"></span>
+                <span>
+                  {formatDistanceToNowStrict(story.time, {
+                    addSuffix: true,
+                    locale: enUS,
+                  })}
+                </span>
               </span>
             </div>
           </div>

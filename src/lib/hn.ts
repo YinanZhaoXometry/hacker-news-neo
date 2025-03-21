@@ -37,14 +37,17 @@ const instance = axios.create({
   timeout: 10000, // 10 seconds timeout
 });
 
-async function fetchWithRetry<T>(url: string, retries = MAX_RETRIES): Promise<T | null> {
+async function fetchWithRetry<T>(
+  url: string,
+  retries = MAX_RETRIES
+): Promise<T | null> {
   try {
     const response = await instance.get<T>(url);
     return response.data;
   } catch (error) {
     if (retries > 0) {
       console.log(`Retrying... ${retries} attempts left`);
-      await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
+      await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY));
       return fetchWithRetry<T>(url, retries - 1);
     }
     console.error(`Failed to fetch ${url}:`, error);
@@ -65,9 +68,7 @@ async function fetchItem(id: number): Promise<HNItem | null> {
 
 // Fetch multiple stories by their IDs
 export async function fetchMultipleStories(ids: number[]): Promise<HNItem[]> {
-  const stories = await Promise.all(
-    ids.map(id => fetchItem(id))
-  );
+  const stories = await Promise.all(ids.map((id) => fetchItem(id)));
   return stories.filter((story): story is HNItem => story !== null);
 }
 
@@ -77,10 +78,9 @@ export async function fetchUser(id: string): Promise<HNUser | null> {
 
 // 批量获取评论
 export async function fetchComments(ids: number[]): Promise<HNItem[]> {
-  const comments = await Promise.all(
-    ids.map(id => fetchItem(id))
+  const comments = await Promise.all(ids.map((id) => fetchItem(id)));
+  return comments.filter(
+    (comment): comment is HNItem =>
+      comment !== null && comment.type === 'comment'
   );
-  return comments.filter((comment): comment is HNItem => 
-    comment !== null && comment.type === 'comment'
-  );
-} 
+}
