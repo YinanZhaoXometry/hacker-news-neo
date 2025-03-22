@@ -1,6 +1,8 @@
+export type FetchHnStoryType = 'top' | 'new' | 'best' | 'ask' | 'show' | 'job';
+
 export interface HNItem {
   id: number;
-  type: string;
+  type: 'job' | 'story' | 'comment' | 'poll' | 'pollopt';
   by?: string;
   time: number;
   text?: string;

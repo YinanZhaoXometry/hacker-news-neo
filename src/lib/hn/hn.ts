@@ -1,15 +1,17 @@
 import { fetchWithRetry } from './hn.helpers';
-import { HNItem, HNUser } from './hn.types';
+import { FetchHnStoryType, HNItem, HNUser } from './hn.types';
 
 // Fetch story IDs by type (top, new, best, etc.)
-export async function fetchHnStoryIdsByType(type: string): Promise<number[]> {
+export async function fetchHnStoryIdsByType(
+  type: FetchHnStoryType
+): Promise<number[]> {
   const stories = await fetchWithRetry<number[]>(`/${type}stories.json`);
   return stories || [];
 }
 
 // Fetch multiple stories by their IDs
 export async function fetchHnStoriesByIds(ids: number[]): Promise<HNItem[]> {
-  const stories = await Promise.all(ids.map((id) => fetchHnItem(id)));
+  const stories = await Promise.all(ids.map((id) => fetchHnItemById(id)));
   return stories.filter((story): story is HNItem => story !== null);
 }
 
@@ -19,7 +21,7 @@ export async function fetchHnUser(id: string): Promise<HNUser | null> {
 
 // Batch retrieve comments
 export async function fetchHnComments(ids: number[]): Promise<HNItem[]> {
-  const comments = await Promise.all(ids.map((id) => fetchHnItem(id)));
+  const comments = await Promise.all(ids.map((id) => fetchHnItemById(id)));
   return comments.filter(
     (comment): comment is HNItem =>
       comment !== null && comment.type === 'comment'
@@ -27,6 +29,6 @@ export async function fetchHnComments(ids: number[]): Promise<HNItem[]> {
 }
 
 // Fetch a single item by ID
-async function fetchHnItem(id: number): Promise<HNItem | null> {
+async function fetchHnItemById(id: number): Promise<HNItem | null> {
   return fetchWithRetry<HNItem>(`/item/${id}.json`);
 }

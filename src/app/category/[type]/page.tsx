@@ -1,12 +1,13 @@
-import { queryStoriesByTypeFromDB, StoryType } from '@/lib/db';
+import { queryStoriesByTypeFromDB as queryStoriesByTagFromDB } from '@/lib/db';
 import Link from 'next/link';
 import { formatDistanceToNowStrict } from 'date-fns';
 import { enUS } from 'date-fns/locale';
 import { ArrowUpRight, ArrowLeft } from 'lucide-react';
 import pluralize from 'pluralize';
-import { isValidStoryType } from './CategoryPage.helpers';
-import { TYPE_MAP } from './CategoryPage.constants';
+import { getStoryTagByFetchStoryType } from './CategoryPage.helpers';
+import { STORY_TAG_TO_NAME_MAP } from './CategoryPage.constants';
 import styles from './CategoryPage.module.css';
+import { FetchHnStoryType } from '@/lib/hn';
 
 export const dynamic = 'force-dynamic';
 
@@ -14,15 +15,15 @@ export default async function CategoryPage({
   params,
   searchParams,
 }: {
-  params: { type: StoryType };
+  params: { type: FetchHnStoryType };
   searchParams: { page?: string };
 }) {
   const page = parseInt(searchParams.page || '1', 10);
   const pageSize = 20;
-  const type = isValidStoryType(params.type) ? params.type : 'top';
+  const storyTag = getStoryTagByFetchStoryType(params.type);
   try {
-    const { stories, totalPages } = await queryStoriesByTypeFromDB(
-      type,
+    const { stories, totalPages } = await queryStoriesByTagFromDB(
+      storyTag,
       page,
       pageSize
     );
@@ -74,7 +75,9 @@ export default async function CategoryPage({
             <ArrowLeft className="w-4 h-4" />
             Home
           </Link>
-          <h1 className="text-3xl font-bold">{TYPE_MAP[type]}</h1>
+          <h1 className="text-3xl font-bold">
+            {STORY_TAG_TO_NAME_MAP[storyTag]}
+          </h1>
         </div>
 
         <div className="space-y-6">

@@ -1,9 +1,10 @@
-import { queryStoryExistsFromDB, createStoryInDB, StoryType } from '@/lib/db';
-import { HNItem } from '@/lib/hn';
+import { getStoryTagByFetchStoryType } from '@/app/category/[type]/CategoryPage.helpers';
+import { createStoryInDB, queryStoryFromDB, updateStoryInDB } from '@/lib/db';
+import { FetchHnStoryType, HNItem } from '@/lib/hn';
 
 interface ProcessedStory {
   id: number;
-  type: StoryType;
+  type: DBStory['type'];
   title: string;
 }
 
@@ -15,24 +16,45 @@ interface DBStory {
 
 export async function processStory(
   story: HNItem,
-  type: string
+  type: FetchHnStoryType
 ): Promise<ProcessedStory | null> {
   if (!story) return null;
 
   try {
-    const exists = await queryStoryExistsFromDB(story.id);
-    if (exists) {
+    const storyFromDB = await queryStoryFromDB(story.id);
+    const storyTag = getStoryTagByFetchStoryType(type);
+    const dbType = mapHNTypeToDBType(type);
+
+    if (storyFromDB && storyFromDB.tags.includes(storyTag)) {
       console.log(`Story existed: ${story.id}`);
       return null;
     }
 
     console.log(`Processing story: ${story.id} (${type})`);
 
-    const dbType = mapHNTypeToDBType(type);
-    const savedStory = (await createStoryInDB({
-      ...story,
-      type: dbType,
-    })) as DBStory;
+    if (storyFromDB && !storyFromDB.tags.includes(storyTag)) {
+      console.log(`Story existed but need update: ${story.id}`);
+      const updatedStory = (await updateStoryInDB({ ...story, type: dbType }, [
+        ...storyFromDB.tags,
+        storyTag,
+      ])) as DBStory;
+
+      console.log(`Story updated: ${story.id} (类型: ${dbType})`);
+
+      return {
+        type: dbType,
+        id: updatedStory.id,
+        title: updatedStory.title,
+      };
+    }
+
+    const savedStory = (await createStoryInDB(
+      {
+        ...story,
+        type: dbType,
+      },
+      [storyTag]
+    )) as DBStory;
 
     console.log(`Story processed: ${story.id} (类型: ${dbType})`);
 
@@ -56,19 +78,19 @@ export function isValidCronRequest(request: Request) {
 }
 
 // Map HN types to database types
-function mapHNTypeToDBType(hnType: string): StoryType {
+function mapHNTypeToDBType(hnType: string): DBStory['type'] {
   switch (hnType) {
     case 'ask':
-      return 'ask';
+      return 'story';
     case 'show':
-      return 'show';
+      return 'story';
     case 'new':
-      return 'new';
+      return 'story';
     case 'top':
-      return 'top';
+      return 'story';
     case 'job':
       return 'job';
     default:
-      return 'top';
+      return 'story';
   }
 }

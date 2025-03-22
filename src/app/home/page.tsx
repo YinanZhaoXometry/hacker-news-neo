@@ -2,10 +2,11 @@ import { queryStoriesByTypesFromDB } from '@/lib/db';
 import { Clock, Newspaper } from 'lucide-react';
 import { CATEGORIES } from './HomePage.constants';
 import { FAQ, Features, StoryCard } from './components';
+import { getStoryTagByFetchStoryType } from '../category/[type]/CategoryPage.helpers';
 
 export default async function HomePage() {
   const allStories = await queryStoriesByTypesFromDB(
-    CATEGORIES.map((t) => t.value)
+    CATEGORIES.map((t) => getStoryTagByFetchStoryType(t.value))
   );
 
   return (

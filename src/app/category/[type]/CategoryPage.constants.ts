@@ -1,10 +1,11 @@
-import { StoryType } from '@/lib/db';
+import { StoryTag } from '@/lib/db';
+import { Tag } from '@prisma/client';
 
-export const TYPE_MAP: Record<StoryType, string> = {
-  top: 'Top 24 hours',
-  new: 'Latest',
-  best: 'Best',
-  ask: 'Ask',
-  show: 'Show',
-  job: 'Jobs',
+export const STORY_TAG_TO_NAME_MAP: Record<StoryTag, string> = {
+  [Tag.TOP]: 'Top 24 hours',
+  [Tag.NEW]: 'Latest',
+  [Tag.BEST]: 'Best',
+  [Tag.ASK]: 'Ask',
+  [Tag.SHOW]: 'Show',
+  [Tag.JOB]: 'Jobs',
 };

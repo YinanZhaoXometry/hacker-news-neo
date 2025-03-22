@@ -7,6 +7,6 @@ export const FAQ_LIST = [
   {
     question: 'How often is the content updated?',
     answer:
-      'We automatically sync the latest HackerNews content every hour, ensuring you can access the most up-to-date tech news in a timely manner. All content is intelligently translated and retains original links, making it easy for you to view the source material.',
+      'We automatically sync the latest HackerNews content every hour, ensuring you can access the most up-to-date tech news in a timely manner. All content is fetched and retains original links, making it easy for you to view the source material.',
   },
 ];

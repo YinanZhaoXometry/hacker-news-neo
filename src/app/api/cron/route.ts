@@ -1,5 +1,9 @@
 import { NextResponse } from 'next/server';
-import { fetchHnStoryIdsByType, fetchHnStoriesByIds } from '@/lib/hn';
+import {
+  fetchHnStoryIdsByType,
+  fetchHnStoriesByIds,
+  FetchHnStoryType,
+} from '@/lib/hn';
 import { isValidCronRequest, processStory } from './cron.helpers';
 
 export const dynamic = 'force-dynamic';
@@ -15,7 +19,14 @@ export async function GET(req: Request) {
   const errors = [];
 
   try {
-    const types = ['new', 'top', 'best', 'ask', 'show', 'job'];
+    const types = [
+      'new',
+      'top',
+      'best',
+      'ask',
+      'show',
+      'job',
+    ] as FetchHnStoryType[];
 
     for (const type of types) {
       try {

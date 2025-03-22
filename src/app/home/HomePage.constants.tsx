@@ -1,4 +1,4 @@
-import { type StoryType } from '@/lib/db/db';
+import { FetchHnStoryType } from '@/lib/hn';
 import {
   Flame,
   Clock,
@@ -9,7 +9,7 @@ import {
 } from 'lucide-react';
 
 export const CATEGORIES: Array<{
-  value: StoryType;
+  value: FetchHnStoryType;
   label: string;
   icon: React.ReactNode;
 }> = [

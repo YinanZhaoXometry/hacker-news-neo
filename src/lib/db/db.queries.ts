@@ -1,44 +1,40 @@
 import { withRetry } from './db.helpers';
-import { StoryType } from './db.types';
+import { OrderBy, StoryTag } from './db.types';
 import { prisma } from './db.helpers';
-
-type OrderBy = {
-  score?: 'asc' | 'desc';
-  time?: 'asc' | 'desc';
-}[];
+import { Tag } from '@prisma/client';
 
 export async function queryStoriesByTypesFromDB(
-  types: StoryType[],
+  storyTags: StoryTag[],
   pageSize: number = 10
 ) {
   try {
     const results = await withRetry(async () => {
-      const queries = types.map((type) => {
+      const queries = storyTags.map((storyTag) => {
         const baseQuery = {
           deleted: false,
           dead: false,
-          type:
-            type === 'top' || type === 'new' || type === 'best'
-              ? 'story'
-              : type,
-          ...(type === 'top'
+          type: storyTag === Tag.JOB ? 'job' : 'story',
+          ...(storyTag === Tag.TOP
             ? {
                 time: {
                   gte: new Date(Date.now() - 24 * 60 * 60 * 1000),
                 },
               }
             : {}),
+          tags: {
+            has: storyTag,
+          },
         };
 
         let orderBy: OrderBy;
-        switch (type) {
-          case 'top':
+        switch (storyTag) {
+          case Tag.TOP:
             orderBy = [{ score: 'desc' }, { time: 'desc' }];
             break;
-          case 'new':
+          case Tag.NEW:
             orderBy = [{ time: 'desc' }];
             break;
-          case 'best':
+          case Tag.BEST:
             orderBy = [{ score: 'desc' }];
             break;
           default:
@@ -61,12 +57,12 @@ export async function queryStoriesByTypesFromDB(
       '查询文章失败:',
       error instanceof Error ? error.message : error
     );
-    return types.map(() => []); // 返回空数组数组
+    return storyTags.map(() => []); // 返回空数组数组
   }
 }
 
 export async function queryStoriesByTypeFromDB(
-  type: StoryType = 'top',
+  storyTag: StoryTag = Tag.TOP,
   page: number = 1,
   pageSize: number = 20
 ) {
@@ -74,26 +70,33 @@ export async function queryStoriesByTypeFromDB(
 
   try {
     return await withRetry(async () => {
+      console.log('storyTag: ', storyTag);
       const baseQuery = {
         deleted: false,
         dead: false,
-        type:
-          type === 'new'
-            ? 'story'
-            : type === 'top' || type === 'best'
-            ? 'story'
-            : type,
+        type: storyTag === Tag.JOB ? 'job' : 'story',
+        ...(storyTag === Tag.TOP
+          ? {
+              time: {
+                gte: new Date(Date.now() - 24 * 60 * 60 * 1000),
+              },
+            }
+          : {}),
+
+        tags: {
+          has: storyTag,
+        },
       };
 
       let orderBy: OrderBy;
-      switch (type) {
-        case 'top':
+      switch (storyTag) {
+        case Tag.TOP:
           orderBy = [{ score: 'desc' }, { time: 'desc' }];
           break;
-        case 'new':
+        case Tag.NEW:
           orderBy = [{ time: 'desc' }];
           break;
-        case 'best':
+        case Tag.BEST:
           orderBy = [{ score: 'desc' }];
           break;
         default:
@@ -120,7 +123,7 @@ export async function queryStoriesByTypeFromDB(
     });
   } catch (error) {
     console.error(
-      '查询文章失败:',
+      'Query stories failed:',
       error instanceof Error ? error.message : error
     );
     return {
@@ -143,6 +146,18 @@ export async function queryStoryExistsFromDB(id: number): Promise<boolean> {
   const count: number = await withRetry(() =>
     prisma.story.count({
       where: { id },
+    })
+  );
+  return count > 0;
+}
+
+export async function queryStoryNeedUpdateFromDB(
+  id: number,
+  tag: Tag
+): Promise<boolean> {
+  const count: number = await withRetry(() =>
+    prisma.story.findUnique({
+      where: { id, tags: { has: tag } },
     })
   );
   return count > 0;
