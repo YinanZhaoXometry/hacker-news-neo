@@ -1,15 +1,10 @@
-Here’s the English translation of your text:
+# HackerNews Neo
 
----
-
-# HackerNews
-
-This is a refactor version of the HackerNews website built with a modern tech stack, offering real-time translated English tech news and discussions.
+This is a refactor version of the HackerNews website built with a modern tech stack, offering real-time tech news and discussions.
 
 ## Project Features
 
 - 🚀 Real-time synchronization of the latest HackerNews content
-- 🤖 Intelligent translation powered by the OpenAI API
 - 💻 Modern user interface design
 - ⚡ Fast loading speeds and responsive design
 - 🌐 Support for browsing various content categories
@@ -28,7 +23,6 @@ This is a refactor version of the HackerNews website built with a modern tech st
 - **Next.js API Routes**: Server-side API implementation
 - **Prisma**: A modern ORM tool
 - **PostgreSQL**: Primary database
-- **OpenAI API**: Provides high-quality content translation services
 
 ### Deployment and Infrastructure
 
@@ -118,7 +112,7 @@ Note: The project is configured to automatically update content hourly. You can 
 
 - Real-time HackerNews content synchronization
   - Automatically fetches the latest content hourly
-  - Supports multiple content types: Latest, Hot, Ask HN, Show HN, Jobs
+  - Supports multiple content types: Latest, Hot, Ask, Show, Jobs
 - User experience
   - Modern and minimalist interface design
   - Responsive layout with seamless mobile support
@@ -130,23 +124,6 @@ Note: The project is configured to automatically update content hourly. You can 
   - Automated scheduled updates
   - Incremental Static Regeneration (ISR)
 
-## Contribution Guidelines
-
-Pull Requests and Issues are welcome!
-
-## Feedback
-
-If you encounter any issues or have suggestions during use, please provide feedback via:
-
-1. Submit an Issue on GitHub
-2. Contact [@decohack](https://twitter.com/decohack) on Twitter
-3. Send an email to [viggo.zw@gmail.com] (please replace with your email)
-
 ## License
 
 MIT License
-
----
-
-Let me know if you need further adjustments!
-# hacker-news-neo
