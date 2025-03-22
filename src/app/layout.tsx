@@ -1,6 +1,5 @@
 import { Inter } from 'next/font/google';
-// import { Header } from '@/components/layout/Header';
-// import { Footer } from '@/components/layout/Footer';
+import { Header, Footer } from '@/components/layout';
 import { metadata } from '@/lib/metadata';
 import Script from 'next/script';
 
@@ -45,11 +44,11 @@ export default function RootLayout({
       </head>
       <body className={inter.className}>
         <div className="relative flex min-h-screen flex-col">
-          {/* <Header /> */}
+          <Header />
           <main className="flex-1 bg-gradient-to-br from-blue-50 via-white to-purple-50">
             {children}
           </main>
-          {/* <Footer /> */}
+          <Footer />
         </div>
       </body>
     </html>
