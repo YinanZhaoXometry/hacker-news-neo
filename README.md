@@ -7,7 +7,7 @@ This is a refactor version of the HackerNews website built with a modern tech st
 - 🚀 Real-time synchronization of the latest HackerNews content
 - 💻 Modern user interface design
 - ⚡ Fast loading speeds and responsive design
-- 🌐 Support for browsing various content categories
+- 📰 Implemented official realworld HackerNews API from FireBase
 
 ## Tech Stack
 
@@ -23,6 +23,7 @@ This is a refactor version of the HackerNews website built with a modern tech st
 - **Next.js API Routes**: Server-side API implementation
 - **PostgreSQL**: Primary database
 - **Prisma**: A modern ORM tool
+- **HackerNews API**: Offical [HackerNews API](https://github.com/HackerNews/API)
 
 ### Deployment and Infrastructure
 
