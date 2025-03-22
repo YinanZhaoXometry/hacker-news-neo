@@ -32,7 +32,7 @@ export function Header() {
               height={32}
               className="h-8 w-8"
             />
-            <span className="font-bold">Neo HackerNews</span>
+            <span className="font-bold">HackerNews Neo</span>
           </Link>
           <div className="flex items-center space-x-6">
             <nav className="hidden md:flex items-center space-x-6">

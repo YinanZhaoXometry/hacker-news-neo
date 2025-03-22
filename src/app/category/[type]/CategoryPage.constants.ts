@@ -1,4 +1,4 @@
-import { StoryType } from '@/lib/db';
+import { StoryType } from '@/lib/db/db';
 
 export const TYPE_MAP: Record<StoryType, string> = {
   top: 'Top 24 hours',

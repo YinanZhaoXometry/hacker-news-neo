@@ -1,4 +1,4 @@
-import { getStories } from '@/lib/db';
+import { queryStoriesFromDB, StoryType } from '@/lib/db';
 import Link from 'next/link';
 import { formatDistanceToNowStrict } from 'date-fns';
 import { enUS } from 'date-fns/locale';
@@ -14,7 +14,7 @@ export default async function CategoryPage({
   params,
   searchParams,
 }: {
-  params: { type: string };
+  params: { type: StoryType };
   searchParams: { page?: string };
 }) {
   const page = parseInt(searchParams.page || '1', 10);
@@ -22,7 +22,11 @@ export default async function CategoryPage({
   const type = isValidStoryType(params.type) ? params.type : 'top';
 
   try {
-    const { stories, totalPages } = await getStories(type, page, pageSize);
+    const { stories, totalPages } = await queryStoriesFromDB(
+      type,
+      page,
+      pageSize
+    );
 
     // If the requested page number exceeds the range, redirect to the first page
     if (page > totalPages && totalPages > 0) {

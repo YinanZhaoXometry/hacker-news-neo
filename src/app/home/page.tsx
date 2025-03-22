@@ -1,10 +1,12 @@
-import { getStoriesByTypes } from '@/lib/db';
+import { queryStoriesByTypesFromDB } from '@/lib/db';
 import { Clock, Newspaper } from 'lucide-react';
 import { CATEGORIES } from './HomePage.constants';
 import { FAQ, Features, StoryCard } from './components';
 
 export default async function HomePage() {
-  const allStories = await getStoriesByTypes(CATEGORIES.map((t) => t.value));
+  const allStories = await queryStoriesByTypesFromDB(
+    CATEGORIES.map((t) => t.value)
+  );
 
   return (
     <div className="min-h-screen">
@@ -15,7 +17,7 @@ export default async function HomePage() {
               <Newspaper className="w-16 h-16 text-blue-600/80" />
             </div>
             <h1 className="text-4xl font-bold mb-6 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              Neo HackerNews
+              HackerNews Neo
             </h1>
             <p className="text-lg text-gray-600 mb-8 leading-relaxed">
               HackerNews Popular content, allowing you to easily stay updated

@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation';
-import { getStory } from '@/lib/db';
+import { queryStoryFromDB } from '@/lib/db';
 import { formatDistanceToNowStrict } from 'date-fns';
 import { enUS } from 'date-fns/locale';
 import { ArrowUpRight } from 'lucide-react';
@@ -15,7 +15,7 @@ export const dynamic = 'force-dynamic';
 export const revalidate = 300; // 每小时重新验证一次
 
 export default async function StoryPage({ params }: PageProps) {
-  const story = (await getStory(parseInt(params.id, 10))) as Story;
+  const story = (await queryStoryFromDB(parseInt(params.id, 10))) as Story;
 
   if (!story) {
     notFound();

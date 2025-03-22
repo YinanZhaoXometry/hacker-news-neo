@@ -1,11 +1,10 @@
 import { NextResponse } from 'next/server';
-import { fetchStories, fetchMultipleStories, type HNItem } from '@/lib/hn';
-import { createStory, storyExists } from '@/lib/db';
+import { fetchHnStories, fetchHnMultipleStories, type HNItem } from '@/lib/hn';
+import { createStoryInDB, queryStoryExistsFromDB } from '@/lib/db';
 
 interface DBStory {
   id: number;
   title: string;
-  titleZh: string | null;
   type: 'story' | 'job';
 }
 
@@ -47,12 +46,12 @@ async function processStory(
   if (!story) return null;
 
   try {
-    const exists = await storyExists(story.id);
+    const exists = await queryStoryExistsFromDB(story.id);
     if (!exists) {
       console.log(`开始处理文章: ${story.id} (${type})`);
       const dbType = mapHNTypeToDBType(type);
 
-      const savedStory = (await createStory({
+      const savedStory = (await createStoryInDB({
         ...story,
         type: dbType,
       })) as DBStory;
@@ -61,7 +60,7 @@ async function processStory(
       return {
         id: savedStory.id,
         type: dbType,
-        title: savedStory.titleZh || savedStory.title,
+        title: savedStory.title,
       };
     }
     console.log(`文章已存在: ${story.id}`);
@@ -87,8 +86,8 @@ export async function GET(req: Request) {
     for (const type of types) {
       try {
         console.log(`正在获取 ${type} 类型的文章...`);
-        const storyIds = await fetchStories(type);
-        const stories = await fetchMultipleStories(storyIds.slice(0, 10));
+        const storyIds = await fetchHnStories(type);
+        const stories = await fetchHnMultipleStories(storyIds.slice(0, 10));
 
         // 并行处理文章，但限制并发数
         const batchSize = 3;

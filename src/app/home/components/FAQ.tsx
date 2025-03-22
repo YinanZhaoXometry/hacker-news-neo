@@ -13,7 +13,7 @@ export function FAQ() {
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold text-gray-900 mb-4">FAQ</h2>
           <p className="text-gray-600 max-w-2xl mx-auto">
-            Questions You Might Want to Know About &quot;Neo HackerNews&quot;
+            Questions You Might Want to Know About &quot;HackerNews Neo&quot;
           </p>
         </div>
         <div className="max-w-3xl mx-auto space-y-4">

@@ -20,7 +20,7 @@ export function Footer() {
           </div>
           <div className="flex flex-col items-center gap-2 text-center text-xs">
             <p>
-              &copy; {new Date().getFullYear()} Neo HackerNews. All rights
+              &copy; {new Date().getFullYear()} HackerNews Neo. All rights
               reserved.
             </p>
           </div>

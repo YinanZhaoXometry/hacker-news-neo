@@ -1,4 +1,4 @@
-import { type StoryType } from '@/lib/db';
+import { type StoryType } from '@/lib/db/db';
 import {
   Flame,
   Clock,

@@ -1,8 +1,8 @@
 export const FAQ_LIST = [
   {
-    question: 'What is "Neo HackerNews"?',
+    question: 'What is "HackerNews Neo"?',
     answer:
-      'Neo HackerNews is a platform that showcases popular HackerNews content, providing users with a convenient tech news reading experience. We curate high-quality content from HackerNews, including technical articles, startup stories, Q&A discussions, and more.',
+      'HackerNews Neo is a platform that showcases popular HackerNews content, providing users with a convenient tech news reading experience. We curate high-quality content from HackerNews, including technical articles, startup stories, Q&A discussions, and more.',
   },
   {
     question: 'How often is the content updated?',
