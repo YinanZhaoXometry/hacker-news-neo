@@ -66,7 +66,7 @@ export default async function CategoryPage({
     const endPage = Math.min(totalPages, startPage + maxDisplayPages - 1);
 
     return (
-      <main className="container mx-auto max-w-4xl px-4 pt-24 pb-8">
+      <main className="container mx-auto max-w-4xl px-6 pt-24 pb-8">
         <div className="flex items-center gap-4 mb-8">
           <Link
             href="/"

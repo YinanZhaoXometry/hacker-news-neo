@@ -5,4 +5,5 @@
 
 .categoryPageHtmlRenderer p {
   margin-top: 14px;
+  word-break: break-all;
 }
