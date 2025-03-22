@@ -2,18 +2,13 @@ import { fetchWithRetry } from './hn.helpers';
 import { HNItem, HNUser } from './hn.types';
 
 // Fetch story IDs by type (top, new, best, etc.)
-export async function fetchHnStories(type: string): Promise<number[]> {
+export async function fetchHnStoryIdsByType(type: string): Promise<number[]> {
   const stories = await fetchWithRetry<number[]>(`/${type}stories.json`);
   return stories || [];
 }
 
-// Fetch a single item by ID
-async function fetchHnItem(id: number): Promise<HNItem | null> {
-  return fetchWithRetry<HNItem>(`/item/${id}.json`);
-}
-
 // Fetch multiple stories by their IDs
-export async function fetchHnMultipleStories(ids: number[]): Promise<HNItem[]> {
+export async function fetchHnStoriesByIds(ids: number[]): Promise<HNItem[]> {
   const stories = await Promise.all(ids.map((id) => fetchHnItem(id)));
   return stories.filter((story): story is HNItem => story !== null);
 }
@@ -29,4 +24,9 @@ export async function fetchHnComments(ids: number[]): Promise<HNItem[]> {
     (comment): comment is HNItem =>
       comment !== null && comment.type === 'comment'
   );
+}
+
+// Fetch a single item by ID
+async function fetchHnItem(id: number): Promise<HNItem | null> {
+  return fetchWithRetry<HNItem>(`/item/${id}.json`);
 }

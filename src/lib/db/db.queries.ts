@@ -65,7 +65,7 @@ export async function queryStoriesByTypesFromDB(
   }
 }
 
-export async function queryStoriesFromDB(
+export async function queryStoriesByTypeFromDB(
   type: StoryType = 'top',
   page: number = 1,
   pageSize: number = 20

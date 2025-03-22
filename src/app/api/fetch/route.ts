@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { fetchHnStories, fetchHnMultipleStories } from '@/lib/hn/hn';
+import { fetchHnStoryIdsByType, fetchHnStoriesByIds } from '@/lib/hn/hn';
 import { createStoryInDB, queryStoryExistsFromDB } from '@/lib/db';
 
 interface Story {
@@ -10,8 +10,8 @@ interface Story {
 export async function GET() {
   try {
     // 先获取 new 类型的最新文章
-    const newStoryIds = await fetchHnStories('new');
-    const newStories = await fetchHnMultipleStories(newStoryIds.slice(0, 30));
+    const newStoryIds = await fetchHnStoryIdsByType('new');
+    const newStories = await fetchHnStoriesByIds(newStoryIds.slice(0, 30));
 
     const results: Array<{ id: number; title: string }> = [];
 

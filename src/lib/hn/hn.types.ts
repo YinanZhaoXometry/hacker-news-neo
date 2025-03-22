@@ -1,6 +1,6 @@
 export interface HNItem {
   id: number;
-  type: 'story' | 'comment' | 'job' | 'poll' | 'pollopt';
+  type: string;
   by?: string;
   time: number;
   text?: string;
@@ -14,8 +14,6 @@ export interface HNItem {
   parts?: number[];
   descendants?: number;
   deleted?: boolean;
-  titleZh?: string;
-  textZh?: string;
 }
 
 export interface HNUser {

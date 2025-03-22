@@ -1,1 +1,1 @@
-export type StoryType = 'top' | 'new' | 'best' | 'ask' | 'show' | 'job';
+export type StoryType = 'new' | 'top' | 'best' | 'ask' | 'show' | 'job';

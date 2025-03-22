@@ -1,4 +1,4 @@
-import { queryStoriesFromDB, StoryType } from '@/lib/db';
+import { queryStoriesByTypeFromDB, StoryType } from '@/lib/db';
 import Link from 'next/link';
 import { formatDistanceToNowStrict } from 'date-fns';
 import { enUS } from 'date-fns/locale';
@@ -20,9 +20,8 @@ export default async function CategoryPage({
   const page = parseInt(searchParams.page || '1', 10);
   const pageSize = 20;
   const type = isValidStoryType(params.type) ? params.type : 'top';
-
   try {
-    const { stories, totalPages } = await queryStoriesFromDB(
+    const { stories, totalPages } = await queryStoriesByTypeFromDB(
       type,
       page,
       pageSize

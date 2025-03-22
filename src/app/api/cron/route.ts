@@ -1,75 +1,9 @@
 import { NextResponse } from 'next/server';
-import { fetchHnStories, fetchHnMultipleStories, type HNItem } from '@/lib/hn';
-import { createStoryInDB, queryStoryExistsFromDB } from '@/lib/db';
-
-interface DBStory {
-  id: number;
-  title: string;
-  type: 'story' | 'job';
-}
+import { fetchHnStoryIdsByType, fetchHnStoriesByIds } from '@/lib/hn';
+import { isValidCronRequest, processStory } from './cron.helpers';
 
 export const dynamic = 'force-dynamic';
-export const maxDuration = 300; // 5分钟超时
-
-function isValidCronRequest(request: Request) {
-  const authHeader = request.headers.get('authorization');
-  if (process.env.CRON_SECRET) {
-    return authHeader === `Bearer ${process.env.CRON_SECRET}`;
-  }
-  return true;
-}
-
-// 将 HN 类型映射到数据库类型
-function mapHNTypeToDBType(hnType: string): 'story' | 'job' {
-  switch (hnType) {
-    case 'ask':
-      return 'story';
-    case 'show':
-      return 'story';
-    case 'job':
-      return 'job';
-    default:
-      return 'story';
-  }
-}
-
-interface ProcessedStory {
-  id: number;
-  type: 'story' | 'job';
-  title: string;
-}
-
-async function processStory(
-  story: HNItem,
-  type: string
-): Promise<ProcessedStory | null> {
-  if (!story) return null;
-
-  try {
-    const exists = await queryStoryExistsFromDB(story.id);
-    if (!exists) {
-      console.log(`开始处理文章: ${story.id} (${type})`);
-      const dbType = mapHNTypeToDBType(type);
-
-      const savedStory = (await createStoryInDB({
-        ...story,
-        type: dbType,
-      })) as DBStory;
-
-      console.log(`文章处理完成: ${story.id} (类型: ${dbType})`);
-      return {
-        id: savedStory.id,
-        type: dbType,
-        title: savedStory.title,
-      };
-    }
-    console.log(`文章已存在: ${story.id}`);
-    return null;
-  } catch (error) {
-    console.error(`处理文章出错 ${story.id}:`, error);
-    return null;
-  }
-}
+export const maxDuration = 300; // timeout 5 minutes
 
 export async function GET(req: Request) {
   if (!isValidCronRequest(req)) {
@@ -85,11 +19,11 @@ export async function GET(req: Request) {
 
     for (const type of types) {
       try {
-        console.log(`正在获取 ${type} 类型的文章...`);
-        const storyIds = await fetchHnStories(type);
-        const stories = await fetchHnMultipleStories(storyIds.slice(0, 10));
+        console.log(`Fetching articles of type ${type}...`);
+        const storyIds = await fetchHnStoryIdsByType(type);
+        const stories = await fetchHnStoriesByIds(storyIds.slice(0, 10));
 
-        // 并行处理文章，但限制并发数
+        // Process articles in parallel, but limit the number of concurrent tasks
         const batchSize = 3;
         for (let i = 0; i < stories.length; i += batchSize) {
           const batch = stories.slice(i, i + batchSize);
@@ -100,7 +34,10 @@ export async function GET(req: Request) {
           results.push(...processedStories.filter(Boolean));
         }
       } catch (error) {
-        console.error(`处理 ${type} 类型文章时出错:`, error);
+        console.error(
+          `Error occurred while processing articles of type ${type}:`,
+          error
+        );
         errors.push({ type, error: String(error) });
       }
     }
@@ -108,9 +45,9 @@ export async function GET(req: Request) {
     const duration = (Date.now() - startTime) / 1000;
     return NextResponse.json({
       success: true,
-      message: `定时任务完成 (${duration.toFixed(1)}秒)：成功获取 ${
-        results.length
-      } 篇文章`,
+      message: `Scheduled task completed (${duration.toFixed(
+        1
+      )} seconds): Successfully fetched ${results.length} articles`,
       results,
       errors: errors.length > 0 ? errors : undefined,
     });
