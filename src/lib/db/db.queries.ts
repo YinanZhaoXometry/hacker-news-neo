@@ -1,84 +1,13 @@
-import { PrismaClient } from '@prisma/client';
-import { HNItem } from './hn';
-
-declare global {
-  // eslint-disable-next-line no-var
-  var prisma: PrismaClient | undefined;
-}
-
-const prismaClientSingleton = () => {
-  return new PrismaClient({
-    log: ['error'],
-  });
-};
-
-export const prisma = globalThis.prisma ?? prismaClientSingleton();
-
-if (process.env.NODE_ENV !== 'production') {
-  globalThis.prisma = prisma;
-}
-
-// 添加重试逻辑的包装函数
-async function withRetry<T>(
-  operation: () => Promise<T>,
-  maxRetries = 5
-): Promise<T> {
-  let lastError: Error | undefined;
-
-  for (let i = 0; i < maxRetries; i++) {
-    try {
-      return await operation();
-    } catch (error) {
-      lastError = error as Error;
-      console.error(`尝试第 ${i + 1} 次失败:`, error);
-
-      if (i === maxRetries - 1) break;
-
-      // 如果是连接错误，尝试重新连接
-      if (error instanceof Error && error.message.includes('connection')) {
-        await prisma.$connect();
-      }
-
-      // 指数退避重试
-      await new Promise((resolve) =>
-        setTimeout(resolve, Math.min(1000 * Math.pow(2, i), 10000))
-      );
-    }
-  }
-
-  throw lastError;
-}
-
-export async function createStory(item: HNItem) {
-  return withRetry(() =>
-    prisma.story.create({
-      data: {
-        id: item.id,
-        title: item.title || '',
-        url: item.url,
-        text: item.text,
-        by: item.by || '',
-        score: item.score || 0,
-        descendants: item.descendants || 0,
-        time: new Date((item.time || 0) * 1000),
-        type: item.type || 'story',
-        dead: item.dead || false,
-        deleted: item.deleted || false,
-        kids: item.kids || [],
-        translated: true,
-      },
-    })
-  );
-}
-
-export type StoryType = 'top' | 'new' | 'best' | 'ask' | 'show' | 'job';
+import { withRetry } from './db.helpers';
+import { StoryType } from './db.types';
+import { prisma } from './db.helpers';
 
 type OrderBy = {
   score?: 'asc' | 'desc';
   time?: 'asc' | 'desc';
 }[];
 
-export async function getStoriesByTypes(
+export async function queryStoriesByTypesFromDB(
   types: StoryType[],
   pageSize: number = 10
 ) {
@@ -136,7 +65,7 @@ export async function getStoriesByTypes(
   }
 }
 
-export async function getStories(
+export async function queryStoriesFromDB(
   type: StoryType = 'top',
   page: number = 1,
   pageSize: number = 20
@@ -202,7 +131,7 @@ export async function getStories(
   }
 }
 
-export async function getStory(id: number) {
+export async function queryStoryFromDB(id: number) {
   return withRetry(() =>
     prisma.story.findUnique({
       where: { id },
@@ -210,7 +139,7 @@ export async function getStory(id: number) {
   );
 }
 
-export async function storyExists(id: number): Promise<boolean> {
+export async function queryStoryExistsFromDB(id: number): Promise<boolean> {
   const count: number = await withRetry(() =>
     prisma.story.count({
       where: { id },
@@ -218,5 +147,3 @@ export async function storyExists(id: number): Promise<boolean> {
   );
   return count > 0;
 }
-
-export default prisma;

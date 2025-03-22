@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 
-const title = 'Neo HackerNews';
+const title = 'HackerNews Neo';
 const description =
   'Real-time updated of HackerNews - Latest tech news and discussions';
 
@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   },
   description,
   keywords: [
-    'Neo HackerNews',
+    'HackerNews Neo',
     'Neo',
     'Tech News',
     'Developer',
