@@ -28,7 +28,7 @@ export async function GET() {
 
         if (!exists) {
           // 保存故事
-          const savedStory = (await createStoryInDB(story)) as Story;
+          const savedStory = (await createStoryInDB(story, ['NEW'])) as Story;
           console.log(`故事 ${story.id} 保存完成`);
 
           results.push({
