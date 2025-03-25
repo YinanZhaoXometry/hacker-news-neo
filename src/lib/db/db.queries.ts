@@ -150,15 +150,3 @@ export async function queryStoryExistsFromDB(id: number): Promise<boolean> {
   );
   return count > 0;
 }
-
-export async function queryStoryNeedUpdateFromDB(
-  id: number,
-  tag: Tag
-): Promise<boolean> {
-  const count: number = await withRetry(() =>
-    prisma.story.findUnique({
-      where: { id, tags: { has: tag } },
-    })
-  );
-  return count > 0;
-}

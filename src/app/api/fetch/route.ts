@@ -58,4 +58,4 @@ export async function GET() {
 
 // 配置路由处理程序
 export const dynamic = 'force-dynamic';
-export const maxDuration = 300; // 设置最大执行时间为5分钟
+export const maxDuration = 60; // 设置最大执行时间为5分钟

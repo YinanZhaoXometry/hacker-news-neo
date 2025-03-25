@@ -7,7 +7,7 @@ import {
 import { isValidCronRequest, processStory } from './cron.helpers';
 
 export const dynamic = 'force-dynamic';
-export const maxDuration = 300; // timeout 5 minutes
+export const maxDuration = 60; // timeout 5 minutes
 
 export async function GET(req: Request) {
   if (!isValidCronRequest(req)) {
