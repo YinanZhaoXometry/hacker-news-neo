@@ -1,11 +1,12 @@
+-- CreateEnum
+CREATE TYPE "Tag" AS ENUM ('TOP', 'NEW', 'BEST', 'ASK', 'SHOW', 'JOB');
+
 -- CreateTable
 CREATE TABLE "Story" (
     "id" INTEGER NOT NULL,
     "title" TEXT NOT NULL,
-    "titleZh" TEXT,
     "url" TEXT,
     "text" TEXT,
-    "textZh" TEXT,
     "by" TEXT NOT NULL,
     "score" INTEGER NOT NULL DEFAULT 0,
     "descendants" INTEGER NOT NULL DEFAULT 0,
@@ -14,9 +15,9 @@ CREATE TABLE "Story" (
     "dead" BOOLEAN NOT NULL DEFAULT false,
     "deleted" BOOLEAN NOT NULL DEFAULT false,
     "kids" INTEGER[],
-    "translated" BOOLEAN NOT NULL DEFAULT false,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
+    "tags" "Tag"[],
 
     CONSTRAINT "Story_pkey" PRIMARY KEY ("id")
 );
